@@ -63,13 +63,13 @@ module.exports = function indexer(options) {
       }, options, opts);
 
       pages.forEach(function (page) {
-        locals = utils.extend({
+        var ctx = utils.extend({
           pages: pages,
           pagination: page
         }, locals);
 
-        var key = opts.createKey(page, locals);
-        collection.addView(key, optscreateView(locals));
+        var key = opts.createKey(page, ctx);
+        collection.addView(key, opts.createView(ctx));
       });
       return collection;
     });

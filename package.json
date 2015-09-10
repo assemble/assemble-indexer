@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "mocha": "*",
+    "should": "^7.1.0",
     "templates": "jonschlinkert/templates#dev"
   },
   "dependencies": {
