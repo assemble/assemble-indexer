@@ -18,14 +18,14 @@ var indexer = require('templates-indexer');
 
 ### [indexer](index.js#L29)
 
-Add `addIndices` to a [templates][] collection that will add index views to the collection when given an array of pages.
+Add `addIndices` to a [templates](https://github.com/jonschlinkert/templates) collection that will add index views to the collection when given an array of pages.
 
 **Params**
 
 * `options` **{Object}**
 * `options.createView` **{Function}**: Function to create a view object for the index view being added.
 * `options.createKey` **{Function}**: Function to create a key for the index view being added.
-* `returns` **{Function}**: Function to use as a plugin for [templates][]
+* `returns` **{Function}**: Function to use as a plugin for [templates](https://github.com/jonschlinkert/templates)
 
 **Example**
 
