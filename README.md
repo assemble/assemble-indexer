@@ -1,11 +1,11 @@
-# templates-indexer [![NPM version](https://badge.fury.io/js/templates-indexer.svg)](http://badge.fury.io/js/templates-indexer)  [![Build Status](https://travis-ci.org/doowb/templates-indexer.svg)](https://travis-ci.org/doowb/templates-indexer) 
+# templates-indexer [![NPM version](https://badge.fury.io/js/templates-indexer.svg)](http://badge.fury.io/js/templates-indexer)  [![Build Status](https://travis-ci.org/doowb/templates-indexer.svg)](https://travis-ci.org/doowb/templates-indexer)
 
 > Templates plugin to add index views to template collections.
 
-## Install with [npm](npmjs.org)
+Install with [npm](https://www.npmjs.com/)
 
-```bash
-npm i templates-indexer --save
+```sh
+$ npm i templates-indexer --save
 ```
 
 ## Usage
@@ -15,35 +15,75 @@ var templatesIndexer = require('templates-indexer');
 ```
 
 ## API
-<!-- add a path or glob pattern for files with code comments to use for docs  -->
-{%= apidocs("index.js") %}
 
-## Related projects
-<!-- add an array of related projects, then un-escape the helper -->
-{%= related([]) %}  
+### [indexer](index.js#L29)
 
-## Running tests
-Install dev dependencies.
+Add `addIndices` to a [templates][] collection that will add index views to the collection when given an array of pages.
 
-```bash
-npm i -d && npm test
+**Params**
+
+* `options` **{Object}**
+* `options.createView` **{Function}**: Function to create a view object for the index view being added.
+* `options.createKey` **{Function}**: Function to create a key for the index view being added.
+* `returns` **{Function}**: Function to use as a plugin for [templates][]
+
+**Example**
+
+```
+var archives = app.create('archives')
+  .use(indexer())
+  .addIndices(pages);
 ```
 
+### [addIndices](index.js#L59)
+
+`addIndices` method decorated onto the given `collection` Iterators over a list of `pages` (built with `list.paginate`) and adds each page to the collection as a new index view
+
+**Params**
+
+* `pages` **{Array}**: Array of pages return from `list.paginate`
+* `locals` **{Object}**: Optional locals to add to each index view.
+* `opts` **{Object}**: Method options to override plugin options.
+* `options.createView` **{Function}**: Function to create a view object for the index view being added.
+* `options.createKey` **{Function}**: Function to create a key for the index view being added.
+* `returns` **{Object}**: Returns `collection` to enable chaining
+
+**Example**
+
+```js
+collection.addIndices(pages, locals);
+```
+
+## Related projects
+
+* [assemble](https://www.npmjs.com/package/assemble): Static site generator for Grunt.js, Yeoman and Node.js. Used by Zurb Foundation, Zurb Ink, H5BP/Effeckt,… [more](https://www.npmjs.com/package/assemble) | [homepage](http://assemble.io)
+* [paginationator](https://www.npmjs.com/package/paginationator): Paginate an array into pages of items. | [homepage](https://github.com/doowb/paginationator)
+* [template](https://www.npmjs.com/package/template): Render templates using any engine. Supports, layouts, pages, partials and custom template types. Use template… [more](https://www.npmjs.com/package/template) | [homepage](https://github.com/jonschlinkert/template)
+* [templates](https://www.npmjs.com/package/templates): System for creating and managing template collections, and rendering templates with any node.js template engine.… [more](https://www.npmjs.com/package/templates) | [homepage](https://github.com/jonschlinkert/templates)
+
+## Running tests
+
+Install dev dependencies:
+
+```sh
+$ npm i -d && npm test
+```
 
 ## Contributing
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/doowb/templates-indexer/issues)
 
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/doowb/templates-indexer/issues/new).
 
 ## Author
 
 **Brian Woodward**
- 
+
 + [github/doowb](https://github.com/doowb)
-+ [twitter/doowb](http://twitter.com/doowb) 
++ [twitter/doowb](http://twitter.com/doowb)
 
 ## License
+
 Copyright © 2015 Brian Woodward
-Released under the MIT license
+Released under the MIT license.
 
 ***
 

@@ -27,5 +27,15 @@
   "dependencies": {
     "extend-shallow": "^2.0.1",
     "lazy-cache": "^0.2.3"
+  },
+  "verb": {
+    "related": {
+      "list": [
+        "template",
+        "templates",
+        "assemble",
+        "paginationator"
+      ]
+    }
   }
 }
