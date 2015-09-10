@@ -11,7 +11,7 @@ $ npm i templates-indexer --save
 ## Usage
 
 ```js
-var templatesIndexer = require('templates-indexer');
+var indexer = require('templates-indexer');
 ```
 
 ## API
