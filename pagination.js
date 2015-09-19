@@ -2,6 +2,7 @@ var path = require('path');
 var templates = require('templates');
 var matter = require('parser-front-matter');
 var permalink = require('assemble-permalinks');
+var writeFile = require('write');
 var async = require('async');
 var List = templates.List;
 var app = templates();
@@ -16,75 +17,98 @@ app.onLoad(/\.txt$/, function (view, next) {
  * Create a collection
  */
 
-app.create('posts');
+app.create('layouts', {viewType: ['layout']});
+app.create('posts')
+  .use(permalink(':base/:name.html'));
+
 app.create('includes', {viewType: ['partial'], engine: 'txt'});
 
-app.include('prev', { content: '<%= pager.prev && pager.prev.path %>' });
-app.include('next', { content: '<%= pager.next && pager.next.path %>' });
+app.helper('relative', require('relative'));
+
+app.layout('default', {
+  content: [
+    '<!DOCTYPE html>',
+    '<html lang="en">',
+    '  <head>',
+    '    <meta charset="UTF-8">',
+    '    <title><%= title %></title>',
+    '  </head>',
+    '  <body>',
+    '    {% body %}',
+    '  </body>',
+    '</html>',
+  ].join('\n')
+});
+
+app.include('prev', { content: '<a href="<%= (pager.prev ? relative(pager.current.url, pager.prev.url) : "#") %>">Prev</a>' });
+app.include('next', { content: '<a href="<%= (pager.next ? relative(pager.current.url, pager.next.url) : "#") %>">Next</a>' });
 
 /**
  * Add some posts to the `posts` collection
  */
+function content (title, body) {
+  return [
+    '---',
+    'title: ' + title,
+    '---',
+    '<h1><%= title %></h1>',
+    '<div>' + body + '</div>',
+    '<div>[<%= include("prev") %>]&nbsp;&nbsp;|&nbsp;&nbsp;[<%= include("next") %>]'
+  ].join('\n');
+}
 
 app.posts({
   'a/b/c/a.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: A\n---\n<%= include("prev") %> aaa <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('A', 'aaa')
   },
   'a/b/c/b.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: B\n---\n<%= include("prev") %> bbb <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('B', 'bbb')
   },
   'a/b/c/c.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: C\n---\n<%= include("prev") %> ccc <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('C', 'ccc')
   },
   'a/b/c/d.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: D\n---\n<%= include("prev") %> ddd <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('D', 'ddd')
   },
   'a/b/c/e.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: E\n---\n<%= include("prev") %> eee <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('E', 'eee')
   },
   'a/b/c/f.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: F\n---\n<%= include("prev") %> fff <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('F', 'fff')
   },
   'a/b/c/g.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: G\n---\n<%= include("prev") %> ggg <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('G', 'ggg')
   },
   'a/b/c/h.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: H\n---\n<%= include("prev") %> hhh <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('H', 'hhh')
   },
   'a/b/c/i.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: I\n---\n<%= include("prev") %> iii <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('I', 'iii')
   },
   'a/b/c/j.txt': {
-    locals: {base: '_gh_posts/blog'},
-    content: '---\ntitle: J\n---\n<%= include("prev") %> jjj <%= include("next") %>'
+    locals: {base: 'pagination/blog'},
+    content: content('J', 'jjj')
   },
 });
 
 var list = new List(app.posts)
-  // .sortBy('path', {reverse:true});
-
-
 var pagination = list.paginate({limit: 3})
-// var pager = list.pagination
-
-// console.log(list.items[1].data.pager)
-// console.log(list.items[5].data.pager.prev.path)
 
 async.each(list.items, function (post, next) {
-  post.render(function (err, res) {
-    if (err) return next(err);
-    console.log(res.content);
-    next();
-  });
+  post.permalink(post.data.permalink, post.locals)
+    .render({layout: 'default'}, function (err, res) {
+      if (err) return next(err);
+      writeFile(path.join('actual', post.url), post.content, next);
+    });
 }, function (err) {
   if (err) return console.error(err);
   console.log('done');
