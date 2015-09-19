@@ -1,12 +1,12 @@
 /*!
- * templates-indexer <https://github.com/doowb/templates-indexer>
+ * assemble-indexer <https://github.com/doowb/assemble-indexer>
  *
  * Copyright (c) 2015, Brian Woodward.
  * Licensed under the MIT License.
  */
 
 'use strict';
-var utils = require('./utils');
+var merge = require('mixin-deep');
 
 /**
  * Add `addIndices` to a [templates][] collection that will
@@ -20,13 +20,12 @@ var utils = require('./utils');
  *
  * @param  {Object} `options`
  * @param  {Function} `options.createView` Function to create a view object for the index view being added.
- * @param  {Function} `options.createKey` Function to create a key for the index view being added.
  * @return {Function} Function to use as a plugin for [templates][]
  * @api public
  * @name indexer
  */
 
-module.exports = function indexer(options) {
+module.exports = function indexer (options) {
   options = options || {};
 
   /**
@@ -36,42 +35,56 @@ module.exports = function indexer(options) {
    */
 
   return function plugin (collection) {
+    collection.define('addIndices', function (pages, opts) {
+      opts = merge({}, options, opts);
+      opts.pages = pages;
 
-    /**
-     * `addIndices` method decorated onto the given `collection`
-     * Iterators over a list of `pages` (built with `list.paginate`)
-     * and adds each page to the collection as a new index view
-     *
-     * ```js
-     * collection.addIndices(pages, locals);
-     * ```
-     *
-     * @param  {Array} `pages` Array of pages return from `list.paginate`
-     * @param  {Object} `locals` Optional locals to add to each index view.
-     * @param  {Object} `opts` Method options to override plugin options.
-     * @param  {Function} `options.createView` Function to create a view object for the index view being added.
-     * @param  {Function} `options.createKey` Function to create a key for the index view being added.
-     * @return {Object} Returns `collection` to enable chaining
-     * @api public
-     * @name  addIndices
-     */
+      var createView = opts.createView;
+      if (typeof createView !== 'function') {
+        var index = opts.index;
 
-    collection.define('addIndices', function (pages, locals, opts) {
-      opts = utils.extend({
-        createView: utils.defaultCreateView,
-        createKey: utils.defaultCreateKey
-      }, options, opts);
+        // if (typeof index === 'undefined') {
+        //   index = collection.view({})
+        // }
+        createView = defaultCreateView(index);
+        delete opts.index;
+      }
 
-      pages.forEach(function (page) {
-        var ctx = utils.extend({
-          pages: pages,
-          pagination: page
-        }, locals);
-
-        var key = opts.createKey(page, ctx);
-        collection.addView(key, opts.createView(ctx));
+      pages.forEach(function (pagination) {
+        opts.pagination = pagination;
+        var view = createView(opts);
+        view.key = view.url || view.path;
+        collection.addView(view);
       });
       return collection;
     });
   };
 };
+
+/**
+ * Default method for creating a new index view.
+ *
+ * ```js
+ * var view = defaultCreateView(locals);
+ * ```
+ *
+ * @param  {Object} `locals` Combined locals for this index view.
+ * @return {Object} New obj or View instance to be used as the index view
+ */
+
+function defaultCreateView (index) {
+  if (typeof index !== 'object' || !index.isView) {
+    throw new Error('expected index to be an instance of View');
+  }
+
+  return function (locals) {
+    var view = index.clone();
+    locals = merge({}, view.locals, locals);
+
+    if (typeof view.permalink === 'function') {
+      view.permalink(view.data.permalink, locals);
+      return view;
+    }
+    return view;
+  };
+}

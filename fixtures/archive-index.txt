@@ -1,0 +1,5 @@
+{{year}} {{month}}
+
+{{#each pagination.items}}
+  {{@root.view.path}} : {{path}} {{!relative ../view.path path}}
+{{/each}}

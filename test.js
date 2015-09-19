@@ -1,16 +1,9 @@
-/*!
- * templates-indexer <https://github.com/doowb/templates-indexer>
- *
- * Copyright (c) 2015 .
- * Licensed under the MIT license.
- */
-
 'use strict';
 
-/* deps:mocha */
+require('mocha');
+require('should');
 var templates = require('templates');
 var assert = require('assert');
-var should = require('should');
 var fs = require('fs');
 
 var indexer = require('./');
@@ -18,7 +11,7 @@ var indexer = require('./');
 var List = templates.List;
 var View = templates.View;
 
-describe('templates-indexer', function () {
+describe('indexer', function () {
   it('should add `addIndices` to a templates collection', function () {
     var app = templates();
     app.create('archives')
