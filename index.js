@@ -37,22 +37,19 @@ module.exports = function indexer (options) {
   return function plugin (collection) {
     collection.define('addIndices', function (pages, opts) {
       opts = merge({}, options, opts);
-      opts.pages = pages;
 
       var createView = opts.createView;
       if (typeof createView !== 'function') {
         var index = opts.index;
-
-        // if (typeof index === 'undefined') {
-        //   index = collection.view({})
-        // }
-        createView = defaultCreateView(index);
+        createView = createViewFn(index);
         delete opts.index;
       }
 
       pages.forEach(function (pagination) {
-        opts.pagination = pagination;
-        var view = createView(opts);
+        var locals = merge({}, opts);
+        locals.pages = pages;
+        locals.pagination = pagination;
+        var view = createView(locals);
         view.key = view.url || view.path;
         collection.addView(view);
       });
@@ -65,21 +62,21 @@ module.exports = function indexer (options) {
  * Default method for creating a new index view.
  *
  * ```js
- * var view = defaultCreateView(locals);
+ * var view = createViewFn(locals);
  * ```
  *
  * @param  {Object} `locals` Combined locals for this index view.
- * @return {Object} New obj or View instance to be used as the index view
+ * @return {Object} New View instance to be used as the index view
  */
 
-function defaultCreateView (index) {
+function createViewFn (index) {
   if (typeof index !== 'object' || !index.isView) {
     throw new Error('expected index to be an instance of View');
   }
 
   return function (locals) {
     var view = index.clone();
-    locals = merge({}, view.locals, locals);
+    view.locals = merge({}, view.locals, locals);
 
     if (typeof view.permalink === 'function') {
       view.permalink(view.data.permalink, locals);

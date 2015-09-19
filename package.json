@@ -1,6 +1,6 @@
 {
   "name": "assemble-indexer",
-  "description": "Templates plugin to add index views to template collections.",
+  "description": "Assemble plugin to add index views to template collections.",
   "version": "0.1.1",
   "homepage": "https://github.com/assemble/assemble-indexer",
   "author": "Brian Woodward (https://github.com/doowb)",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "assemble-loader": "^0.1.1",
+    "assemble-permalinks": "^0.1.0",
     "async": "^1.4.2",
     "engine-base": "^0.1.2",
     "gulp": "^3.9.0",
