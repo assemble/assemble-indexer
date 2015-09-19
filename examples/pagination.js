@@ -107,7 +107,7 @@ async.each(list.items, function (post, next) {
   post.permalink(post.data.permalink, post.locals)
     .render({layout: 'default'}, function (err, res) {
       if (err) return next(err);
-      writeFile(path.join('actual', post.url), post.content, next);
+      writeFile(path.join(__dirname, '../actual', post.url), post.content, next);
     });
 }, function (err) {
   if (err) return console.error(err);
