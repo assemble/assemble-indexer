@@ -55,7 +55,7 @@ describe('indexer', function () {
   });
 
   it('should create index views with custom createView function on plugin options', function () {
-    var contents = fs.readFileSync('fixtures/archive-index.hbs');
+    var contents = fs.readFileSync('fixtures/templates/indices/archive-index.txt');
     var archiveIndexView = app.view({path: 'archive-index.hbs', contents: contents})
       .use(permalink(':index(pagination.idx):name.html', {
         index: function (i) {
@@ -95,7 +95,7 @@ describe('indexer', function () {
   });
 
   it('should create index views with custom createView function on method options', function () {
-    var contents = fs.readFileSync('fixtures/archive-index.hbs');
+    var contents = fs.readFileSync('fixtures/templates/indices/archive-index.txt');
     var archiveIndexView = app.view({path: 'archive-index.hbs', contents: contents})
       .use(permalink(':index(pagination.idx):name.html', {
         index: function (i) {
@@ -135,7 +135,7 @@ describe('indexer', function () {
   });
 
   it('should create index views with additional locals', function () {
-    var contents = fs.readFileSync('fixtures/archive-index.hbs');
+    var contents = fs.readFileSync('fixtures/templates/indices/archive-index.txt');
     var archiveIndexView = app.view({path: 'archive-index.hbs', contents: contents})
       .use(permalink(':index(pagination.idx):name.html', {
         index: function (i) {
