@@ -1,11 +1,13 @@
 
-<h1><%= year %> <%= month %></h1>
+<h1><% if (typeof year !== "undefined") {%><%= year %><% } %><% if (typeof month !== "undefined") { %>-<%= month %><% } %></h1>
 
 <div>
 <% pagination.items.forEach(function (post) { %>
   <div>
     <h2><a href="<%= relative(view.url, post.url) %>"><%= post.data.title %></a></h2>
-    <pre><%= post.content %><pre>
+    <pre><pre>
   </div>
 <% }); %>
 </div>
+
+<div>[<%= include("prev") %>]&nbsp;&nbsp;|&nbsp;&nbsp;[<%= include("next") %>]
