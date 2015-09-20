@@ -1,0 +1,11 @@
+
+<div>
+<% pagination.items.forEach(function (post) { %>
+  <div>
+    <h2><a href="<%= relative(view.url, post.url) %>"><%= post.data.title %></a></h2>
+    <pre><pre>
+  </div>
+<% }); %>
+</div>
+
+<div>[<%= include("prev") %>]&nbsp;&nbsp;|&nbsp;&nbsp;[<%= include("next") %>]

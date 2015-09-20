@@ -1,0 +1,11 @@
+
+<h1><%= year %> <%= month %></h1>
+
+<div>
+<% pagination.items.forEach(function (post) { %>
+  <div>
+    <h2><a href="<%= relative(view.url, post.url) %>"><%= post.data.title %></a></h2>
+    <pre><%= post.content %><pre>
+  </div>
+<% }); %>
+</div>

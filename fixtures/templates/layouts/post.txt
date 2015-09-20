@@ -1,0 +1,6 @@
+---
+layout: default
+---
+<h1><%= title %></h1>
+<div>{% body %}</div>
+<div>[<%= include("prev") %>]&nbsp;&nbsp;|&nbsp;&nbsp;[<%= include("next") %>]
