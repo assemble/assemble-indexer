@@ -19,7 +19,8 @@ var merge = require('mixin-deep');
  * ```
  *
  * @param  {Object} `options`
- * @param  {Function} `options.createView` Function to create a view object for the index view being added.
+ * @param  {Object} `options.index` Optional instance of `View` to use as the basis for the index views being added. Required if `createView` is not passed on plugin or method options.
+ * @param  {Function} `options.createView` Function to create a view instance for the index view being added. Required if `index` is not passed on plugin or method options.
  * @return {Function} Function to use as a plugin for [templates][]
  * @api public
  * @name indexer

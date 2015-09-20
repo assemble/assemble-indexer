@@ -14,34 +14,17 @@ $ npm i assemble-indexer --save
 var indexer = require('assemble-indexer');
 ```
 
-### .addIndices
-
-`addIndices` method decorated onto the given `collection` Iterators over a list of `pages` (built with `list.paginate`) and adds each page to the collection as a new index view
-
-**Params**
-
-* `pages` **{Array}**: Array of pages return from `list.paginate`
-* `locals` **{Object}**: Optional locals to add to each index view.
-* `opts` **{Object}**: Method options to override plugin options.
-* `options.createView` **{Function}**: Function to create a view object for the index view being added.
-* `returns` **{Object}**: Returns `collection` to enable chaining
-
-**Example**
-
-```js
-collection.addIndices(pages, locals);
-```
-
 ## API
 
-### [indexer](index.js#L28)
+### [indexer](index.js#L29)
 
 Add `addIndices` to a [templates](https://github.com/jonschlinkert/templates) collection that will add index views to the collection when given an array of pages.
 
 **Params**
 
 * `options` **{Object}**
-* `options.createView` **{Function}**: Function to create a view object for the index view being added.
+* `options.index` **{Object}**: Optional instance of `View` to use as the basis for the index views being added. Required if `createView` is not passed on plugin or method options.
+* `options.createView` **{Function}**: Function to create a view instance for the index view being added. Required if `index` is not passed on plugin or method options.
 * `returns` **{Function}**: Function to use as a plugin for [templates](https://github.com/jonschlinkert/templates)
 
 **Example**
@@ -50,6 +33,24 @@ Add `addIndices` to a [templates](https://github.com/jonschlinkert/templates) co
 var archives = app.create('archives')
   .use(indexer())
   .addIndices(pages);
+```
+
+### .addIndices
+
+`addIndices` method decorated onto the given `collection` Iterators over a list of `pages` (built with `list.paginate`) and adds each page to the collection as a new index view
+
+**Params**
+
+* `pages` **{Array}**: Array of pages return from `list.paginate`
+* `opts` **{Object}**: Method options to override plugin options. Will also be added to locals for each index view.
+* `opts.index` **{Object}**: Optional instance of `View` to use as the basis for the index views being added. Required if `createView` is not passed on plugin or method options.
+* `opts.createView` **{Function}**: Function to create a view instance for the index view being added. Required if `index` is not passed on plugin or method options.
+* `returns` **{Object}**: Returns `collection` to enable chaining
+
+**Example**
+
+```js
+collection.addIndices(pages, locals);
 ```
 
 ## Related projects
