@@ -1,4 +1,7 @@
 var path = require('path');
+var cyan = require('ansi-cyan');
+var grey = require('ansi-grey');
+var symbols = require('log-symbols');
 var templates = require('templates');
 var matter = require('parser-front-matter');
 var permalink = require('assemble-permalinks');
@@ -103,11 +106,21 @@ app.posts({
 var list = new List(app.posts)
 var pagination = list.paginate({limit: 3})
 
-async.each(list.items, function (post, next) {
-  post.permalink(post.data.permalink, post.locals)
-    .render({layout: 'default'}, function (err, res) {
+async.eachSeries(list.items, function (post, next) {
+  post.permalink(post.data.permalink, post.locals);
+  process.stdout.write(cyan('Rendering ') + grey(post.url) + cyan(' => '));
+  post.render({layout: 'default'}, function (err, res) {
       if (err) return next(err);
-      writeFile(path.join(__dirname, '../actual', post.url), post.content, next);
+      var dest = path.join(__dirname, '../actual', post.url);
+      process.stdout.write(grey(path.relative(process.cwd(), dest)) + '... ');
+      writeFile(dest, post.content, function (err) {
+        if (err) {
+          process.stdout.write(symbols.error + '\n');
+          return next(err);
+        }
+        process.stdout.write(symbols.success + '\n');
+        next();
+      });
     });
 }, function (err) {
   if (err) return console.error(err);
