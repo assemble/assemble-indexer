@@ -1,8 +1,11 @@
 var path = require('path');
+var red = require('ansi-red');
 var cyan = require('ansi-cyan');
 var grey = require('ansi-grey');
-var symbols = require('log-symbols');
+var green = require('ansi-green');
+var error = require('error-symbol');
 var templates = require('templates');
+var success = require('success-symbol');
 var matter = require('parser-front-matter');
 var permalink = require('assemble-permalinks');
 var writeFile = require('write');
@@ -115,10 +118,10 @@ async.eachSeries(list.items, function (post, next) {
       process.stdout.write(grey(path.relative(process.cwd(), dest)) + '... ');
       writeFile(dest, post.content, function (err) {
         if (err) {
-          process.stdout.write(symbols.error + '\n');
+          process.stdout.write(red(error) + '\n');
           return next(err);
         }
-        process.stdout.write(symbols.success + '\n');
+        process.stdout.write(green(success) + '\n');
         next();
       });
     });

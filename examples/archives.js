@@ -1,10 +1,13 @@
 var path = require('path');
 var async = require('async');
+var red = require('ansi-red');
 var cyan = require('ansi-cyan');
 var grey = require('ansi-grey');
 var writeFile = require('write');
-var symbols = require('log-symbols');
+var green = require('ansi-green');
+var error = require('error-symbol');
 var templates = require('templates');
+var success = require('success-symbol');
 var loader = require('assemble-loader');
 var matter = require('parser-front-matter');
 var permalink = require('assemble-permalinks');
@@ -282,10 +285,10 @@ function renderList (list, locals, cb) {
       process.stdout.write(grey(path.relative(process.cwd(), dest)) + '... ');
       writeFile(dest, res.content, function (err) {
         if (err) {
-          process.stdout.write(symbols.error + '\n');
+          process.stdout.write(red(error) + '\n');
           return next(err);
         }
-        process.stdout.write(symbols.success + '\n');
+        process.stdout.write(green(success) + '\n');
         next();
       });
     });
