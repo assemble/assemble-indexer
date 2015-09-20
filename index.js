@@ -77,9 +77,6 @@ function createViewFn (index) {
 
   return function (locals) {
     var view = index.clone({deep: true});
-    if (typeof view.data.foo === 'undefined') {
-      view.data.foo = {bar: 'baz'};
-    }
     view.locals = merge({}, view.locals, locals);
 
     if (typeof view.permalink === 'function') {

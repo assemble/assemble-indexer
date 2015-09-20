@@ -24,6 +24,24 @@ describe('indexer', function () {
       }));
   });
 
+  it('should throw an error when an index instance is not passed', function () {
+    var list = new List();
+    list.addList([
+      {path: 'a.hbs', content: 'aaa'},
+      {path: 'b.hbs', content: 'bbb'},
+      {path: 'c.hbs', content: 'ccc'},
+      {path: 'd.hbs', content: 'ddd'},
+      {path: 'e.hbs', content: 'eee'},
+    ]);
+    var pages = list.paginate({limit: 2});
+
+    (function () {
+      app.create('archives')
+        .use(indexer())
+        .addIndices(pages);
+    }).should.throw('expected index to be an instance of View');
+  });
+
   it('should add `addIndices` to a templates collection', function () {
     app.create('archives')
       .use(indexer({index: index}));
@@ -31,6 +49,45 @@ describe('indexer', function () {
   });
 
   it('should create index views with default options', function () {
+    var list = new List();
+    list.addList([
+      {path: 'a.hbs', content: 'aaa'},
+      {path: 'b.hbs', content: 'bbb'},
+      {path: 'c.hbs', content: 'ccc'},
+      {path: 'd.hbs', content: 'ddd'},
+      {path: 'e.hbs', content: 'eee'},
+    ]);
+    var pages = list.paginate({limit: 2});
+
+    app.create('archives')
+      .use(indexer({index: index}))
+      .addIndices(pages);
+
+    var keys = Object.keys(app.views.archives);
+    keys.length.should.equal(pages.length);
+    pages.forEach(function (page) {
+      var key = (page.isFirst ? '' : page.current + '/') + 'index.html';
+      assert.equal(keys.indexOf(key) === -1, false);
+      assert.deepEqual(app.views.archives[key].locals.pagination, page);
+    });
+  });
+
+  it('should create index views with default options when permalink is not installed', function () {
+    var i = 0;
+    var index = {
+      isView: true,
+      path: 'index.hbs',
+      content: 'index',
+      clone: function () {
+        var obj = {
+          path: (i === 0 ? '' : (i + 1) + '/') + 'index.html',
+          content: 'index'
+        };
+        i++;
+        return obj;
+      }
+    };
+
     var list = new List();
     list.addList([
       {path: 'a.hbs', content: 'aaa'},
