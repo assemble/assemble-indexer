@@ -1,0 +1,1 @@
+<a href="<%= (pager.prev ? relative(pager.current.url, pager.prev.url) : "#") %>">Prev</a>

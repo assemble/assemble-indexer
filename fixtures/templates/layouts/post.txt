@@ -1,0 +1,7 @@
+---
+layout: default
+---
+<h1><%= title %></h1>
+<h3><%= year %>-<%= month %></h3>
+<div>{% body %}</div>
+<div>[<%= include("prev") %>]&nbsp;&nbsp;|&nbsp;&nbsp;[<%= include("next") %>]
