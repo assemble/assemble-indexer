@@ -42,18 +42,25 @@
     "parser-front-matter": "^1.2.5",
     "relative": "^3.0.1",
     "rimraf": "^2.4.3",
-    "should": "^7.1.0",
+    "should": "*",
     "success-symbol": "^0.1.0",
     "templates": "^0.1.22"
   },
+  "keywords": [
+    "assemble",
+    "indexer"
+  ],
   "verb": {
     "related": {
       "list": [
-        "template",
-        "templates",
         "assemble",
-        "paginationator"
+        "paginationator",
+        "template",
+        "templates"
       ]
-    }
+    },
+    "reflinks": [
+      "templates"
+    ]
   }
 }

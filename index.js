@@ -1,15 +1,9 @@
-/*!
- * assemble-indexer <https://github.com/doowb/assemble-indexer>
- *
- * Copyright (c) 2015, Brian Woodward.
- * Licensed under the MIT License.
- */
-
 'use strict';
+
 var merge = require('mixin-deep');
 
 /**
- * Add `addIndices` to a [templates][] collection that will
+ * Add `addIndices` to an [assemble][] collection that will
  * add index views to the collection when given an array of pages.
  *
  * ```
@@ -21,22 +15,26 @@ var merge = require('mixin-deep');
  * @param  {Object} `options`
  * @param  {Object} `options.index` Optional instance of `View` to use as the basis for the index views being added. Required if `createView` is not passed on plugin or method options.
  * @param  {Function} `options.createView` Function to create a view instance for the index view being added. Required if `index` is not passed on plugin or method options.
- * @return {Function} Function to use as a plugin for [templates][]
+ * @return {Function} Function to use as a plugin for [assemble][]
  * @api public
  * @name indexer
  */
 
-module.exports = function indexer (options) {
+module.exports = function indexer(options) {
   options = options || {};
 
   /**
-   * Plugin passed to [templates][] `.use` method.
+   * Plugin passed to [assemble][] `.use` method.
    *
    * @param  {Object} `collection` collection instance the plugin is added to.
    */
 
-  return function plugin (collection) {
-    collection.define('addIndices', function (pages, opts) {
+  return function plugin(collection) {
+    if (!collection.isViews && !collection.isList) {
+      return collection;
+    }
+
+    collection.define('addIndices', function(pages, opts) {
       opts = merge({}, options, opts);
 
       var createView = opts.createView;
@@ -46,7 +44,7 @@ module.exports = function indexer (options) {
         delete opts.index;
       }
 
-      pages.forEach(function (pagination) {
+      pages.forEach(function(pagination) {
         var locals = merge({}, opts);
         locals.pages = pages;
         locals.pagination = pagination;
@@ -54,6 +52,7 @@ module.exports = function indexer (options) {
         view.key = view.url || view.path;
         collection.addView(view);
       });
+
       return collection;
     });
   };
@@ -71,16 +70,16 @@ module.exports = function indexer (options) {
  */
 
 function createViewFn (index) {
-  if (typeof index !== 'object' || !index.isView) {
+  if (!index || typeof index !== 'object' || !index.isView) {
     throw new Error('expected index to be an instance of View');
   }
 
-  return function (locals) {
+  return function(locals) {
     var view = index.clone({deep: true});
     view.locals = merge({}, view.locals, locals);
 
     if (typeof view.permalink === 'function') {
-      view.permalink(view.data.permalink, locals);
+      view.permalink();
       return view;
     }
     return view;
