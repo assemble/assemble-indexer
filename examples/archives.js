@@ -228,7 +228,10 @@ var list = new List(app.posts);
  */
 
 list.items.forEach(function(post) {
-  post.permalink(post.data.permalink, {title: post.data.title, base: post.locals.base});
+  post.permalink(post.data.permalink, {
+    title: post.data.title,
+    base: post.locals.base
+  });
 });
 
 /**

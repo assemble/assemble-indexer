@@ -36,20 +36,21 @@ module.exports = function indexer(options) {
 
     collection.define('addIndices', function(pages, opts) {
       opts = merge({}, options, opts);
+      var Index = opts.View || opts.Index;
 
-      var createView = opts.createView;
-      if (typeof createView !== 'function') {
-        var index = opts.index;
-        createView = createViewFn(index);
-        delete opts.index;
+      if (typeof Index !== 'function' && opts.index) {
+        Index = opts.index.constructor;
       }
 
-      pages.forEach(function(pagination) {
+      pages.forEach(function(items) {
         var locals = merge({}, opts);
         locals.pages = pages;
-        locals.pagination = pagination;
-        var view = createView(locals);
-        view.key = view.url || view.path;
+        locals.items = items;
+
+        var view = new Index(opts.index.clone());
+        var ctx = merge({}, opts.index.locals, locals);
+        view.permalink(ctx);
+
         collection.addView(view);
       });
 
@@ -79,7 +80,7 @@ function createViewFn(index) {
     view.locals = merge({}, view.locals, locals);
 
     if (typeof view.permalink === 'function') {
-      view.permalink();
+      view.permalink(view.data.permalink, view.locals);
       return view;
     }
     return view;
