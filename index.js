@@ -69,7 +69,7 @@ module.exports = function indexer(options) {
  * @return {Object} New View instance to be used as the index view
  */
 
-function createViewFn (index) {
+function createViewFn(index) {
   if (!index || typeof index !== 'object' || !index.isView) {
     throw new Error('expected index to be an instance of View');
   }

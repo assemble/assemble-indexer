@@ -1,21 +1,20 @@
+'use strict';
+
 var path = require('path');
-var red = require('ansi-red');
-var cyan = require('ansi-cyan');
-var grey = require('ansi-grey');
-var green = require('ansi-green');
+var colors = require('ansi-colors');
 var error = require('error-symbol');
-var templates = require('templates');
+var assemble = require('assemble-core');
 var success = require('success-symbol');
 var matter = require('parser-front-matter');
 var permalink = require('assemble-permalinks');
 var writeFile = require('write');
 var async = require('async');
-var List = templates.List;
-var app = templates();
+var List = assemble.List;
+var app = assemble();
 
 app.engine('txt', require('engine-base'));
 
-app.onLoad(/\.txt$/, function (view, next) {
+app.onLoad(/\.txt$/, function(view, next) {
   matter.parse(view, next);
 });
 
@@ -23,11 +22,17 @@ app.onLoad(/\.txt$/, function (view, next) {
  * Create a collection
  */
 
-app.create('layouts', {viewType: ['layout']});
+app.create('layouts', {
+  viewType: ['layout']
+});
+
 app.create('posts')
   .use(permalink(':base/:name.html'));
 
-app.create('includes', {viewType: ['partial'], engine: 'txt'});
+app.create('includes', {
+  viewType: ['partial'],
+  engine: 'txt'
+});
 
 app.helper('relative', require('relative'));
 
@@ -46,13 +51,19 @@ app.layout('default', {
   ].join('\n')
 });
 
-app.include('prev', { content: '<a href="<%= (pager.prev ? relative(pager.current.url, pager.prev.url) : "#") %>">Prev</a>' });
-app.include('next', { content: '<a href="<%= (pager.next ? relative(pager.current.url, pager.next.url) : "#") %>">Next</a>' });
+app.include('prev', {
+  content: '<a href="<%= (pager.prev ? relative(pager.current.url, pager.prev.url) : "#") %>">Prev</a>'
+});
+
+app.include('next', {
+  content: '<a href="<%= (pager.next ? relative(pager.current.url, pager.next.url) : "#") %>">Next</a>'
+});
 
 /**
  * Add some posts to the `posts` collection
  */
-function content (title, body) {
+
+function content(title, body) {
   return [
     '---',
     'title: ' + title,
@@ -65,67 +76,98 @@ function content (title, body) {
 
 app.posts({
   'a/b/c/a.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('A', 'aaa')
+    content: content('A', 'aaa'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/b.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('B', 'bbb')
+    content: content('B', 'bbb'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/c.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('C', 'ccc')
+    content: content('C', 'ccc'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/d.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('D', 'ddd')
+    content: content('D', 'ddd'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/e.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('E', 'eee')
+    content: content('E', 'eee'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/f.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('F', 'fff')
+    content: content('F', 'fff'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/g.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('G', 'ggg')
+    content: content('G', 'ggg'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/h.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('H', 'hhh')
+    content: content('H', 'hhh'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/i.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('I', 'iii')
+    content: content('I', 'iii'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
   'a/b/c/j.txt': {
-    locals: {base: 'pagination/blog'},
-    content: content('J', 'jjj')
+    content: content('J', 'jjj'),
+    locals: {
+      base: 'pagination/blog'
+    }
   },
 });
 
 var list = new List(app.posts)
-var pagination = list.paginate({limit: 3})
+var pagination = list.paginate({
+  limit: 3
+})
 
-async.eachSeries(list.items, function (post, next) {
+async.eachSeries(list.items, function(post, next) {
   post.permalink(post.data.permalink, post.locals);
-  process.stdout.write(cyan('Rendering ') + grey(post.url) + cyan(' => '));
-  post.render({layout: 'default'}, function (err, res) {
-      if (err) return next(err);
-      var dest = path.join(__dirname, '../actual', post.url);
-      process.stdout.write(grey(path.relative(process.cwd(), dest)) + '... ');
-      writeFile(dest, post.content, function (err) {
-        if (err) {
-          process.stdout.write(red(error) + '\n');
-          return next(err);
-        }
-        process.stdout.write(green(success) + '\n');
-        next();
-      });
+  var msg = colors.cyan('Rendering ')
+    + colors.gray(post.url)
+    + colors.cyan(' => ');
+
+  process.stdout.write(msg);
+  post.render({layout: 'default'}, function(err, res) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    var dest = path.join(__dirname, '../actual', post.url);
+    process.stdout.write(colors.gray(path.relative(process.cwd(), dest)) + '... ');
+    writeFile(dest, post.content, function(err) {
+      if (err) {
+        process.stdout.write(colors.red(error) + '\n');
+        next(err);
+        return;
+      }
+      process.stdout.write(colors.green(success) + '\n');
+      next();
     });
-}, function (err) {
+  });
+}, function(err) {
   if (err) return console.error(err);
   console.log('done');
 });

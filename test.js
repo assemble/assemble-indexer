@@ -3,19 +3,18 @@
 require('mocha');
 require('should');
 var permalink = require('assemble-permalinks');
-var templates = require('templates');
+var assemble = require('assemble-core');
 var assert = require('assert');
 var fs = require('fs');
 
 var indexer = require('./');
 
-var List = templates.List;
+var List = assemble.List;
 var app, index;
 
 describe('indexer', function () {
   beforeEach(function () {
-    app = templates();
-    app.initialize();
+    app = assemble();
     index = app.view({path: 'index.hbs', content: ''})
       .use(permalink(':index(pagination.idx):name.html', {
         index: function (i) {
